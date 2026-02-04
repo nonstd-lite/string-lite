@@ -96,7 +96,7 @@ In general, functions take `string_view`s and thereby `char const *`, `std::stri
 <a id="syn-doc"></a>
 ### Documentation of *string lite*
 
-The following table presents types, values and simplified, short prototypes of the functions in _string-bare_'s `nonstd` namespace.
+The following table presents types, values and simplified, short prototypes of the functions in _string-lite_'s `nonstd` namespace.
 
 | Kind              | Type or function                                                                                      | Notes                                                                                                                 |
 | ----------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
