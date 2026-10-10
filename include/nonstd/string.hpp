@@ -20,13 +20,11 @@
 
 // tweak header support:
 
-#ifdef __has_include
-# if __has_include(<nonstd/string.tweak.hpp>)
-#  include <nonstd/string.tweak.hpp>
-# endif
-#define string_HAVE_TWEAK_HEADER  1
+#if defined(__has_include) && __has_include(<nonstd/string.tweak.hpp>)
+# include <nonstd/string.tweak.hpp>
+# define string_HAVE_TWEAK_HEADER  1
 #else
-#define string_HAVE_TWEAK_HEADER  0
+# define string_HAVE_TWEAK_HEADER  0
 //# pragma message("string.hpp: Note: Tweak header not supported.")
 #endif
 
