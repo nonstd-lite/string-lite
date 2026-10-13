@@ -215,7 +215,8 @@ Define this to 1 if you want to compile without exceptions. If not defined, the 
 
 ## Notes and references
 
-- [n3593 - std::split(): An algorithm for splitting strings](http://wg21.link/n3593). / https://isocpp.org/files/papers/n3593.html
+- [p2591 - Concatenation of strings and string views](https://wg21.link/p2591).
+- [n3593 - std::split(): An algorithm for splitting strings](http://wg21.link/n3593).
 - [Martin Broadhurst. Exploring String Splitting in C++ Programming. 2023](http://www.martinbroadhurst.com/how-to-split-a-string-in-c.html).
 - [Search GitHub for C++ string algorithms](https://github.com/topics/string-algorithms?l=c%2B%2B).
 
