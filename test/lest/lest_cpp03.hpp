@@ -28,8 +28,8 @@
 #include <ctime>
 
 #define lest_MAJOR  1
-#define lest_MINOR  35
-#define lest_PATCH  2
+#define lest_MINOR  37
+#define lest_PATCH  0
 
 #define  lest_VERSION  lest_STRINGIFY(lest_MAJOR) "." lest_STRINGIFY(lest_MINOR) "." lest_STRINGIFY(lest_PATCH)
 
@@ -66,7 +66,7 @@
 #if lest_FEATURE_TIME
 # if lest_PLATFORM_IS_WINDOWS
 #  include <iomanip>
-#  include <Windows.h>
+#  include <windows.h>
 # else
 #  include <iomanip>
 #  include <sys/time.h>
@@ -251,7 +251,7 @@
 # define lest_TRY        if (1)
 # define lest_CATCH(x)   else if (0)
 # define lest_CATCH_ALL  else if (0)
-# define lest_THROW(x)   std::terminate()
+# define lest_THROW(x)   ( (void) sizeof( x ), std::terminate() )
 # define lest_RETHROW
 #endif // lest_HAVE( EXCEPTIONS )
 

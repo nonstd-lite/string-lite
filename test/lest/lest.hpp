@@ -32,8 +32,8 @@
 #include <cstddef>
 
 #define lest_MAJOR  1
-#define lest_MINOR  35
-#define lest_PATCH  2
+#define lest_MINOR  37
+#define lest_PATCH  0
 
 #define  lest_VERSION  lest_STRINGIFY(lest_MAJOR) "." lest_STRINGIFY(lest_MINOR) "." lest_STRINGIFY(lest_PATCH)
 
@@ -95,6 +95,10 @@
 // Suppress shadow and unused-value warning for sections:
 
 #if defined (__clang__)
+# define lest_SUPPRESS_WMISBRACES _Pragma( "clang diagnostic push" ) \
+                                  _Pragma( "clang diagnostic ignored \"-Wmissing-braces\"" )
+# define lest_RESTORE_WMISBRACES  _Pragma( "clang diagnostic pop"  )
+
 # define lest_SUPPRESS_WSHADOW    _Pragma( "clang diagnostic push" ) \
                                   _Pragma( "clang diagnostic ignored \"-Wshadow\"" )
 # define lest_SUPPRESS_WUNUSED    _Pragma( "clang diagnostic push" ) \
@@ -102,12 +106,17 @@
 # define lest_RESTORE_WARNINGS    _Pragma( "clang diagnostic pop"  )
 
 #elif defined (__GNUC__)
+# define lest_SUPPRESS_WMISBRACES /*empty*/
+# define lest_RESTORE_WMISBRACES  /*empty*/
+
 # define lest_SUPPRESS_WSHADOW    _Pragma( "GCC diagnostic push" ) \
                                   _Pragma( "GCC diagnostic ignored \"-Wshadow\"" )
 # define lest_SUPPRESS_WUNUSED    _Pragma( "GCC diagnostic push" ) \
                                   _Pragma( "GCC diagnostic ignored \"-Wunused-value\"" )
 # define lest_RESTORE_WARNINGS    _Pragma( "GCC diagnostic pop"  )
 #else
+# define lest_SUPPRESS_WMISBRACES /*empty*/
+# define lest_RESTORE_WMISBRACES  /*empty*/
 # define lest_SUPPRESS_WSHADOW    /*empty*/
 # define lest_SUPPRESS_WUNUSED    /*empty*/
 # define lest_RESTORE_WARNINGS    /*empty*/
@@ -130,6 +139,20 @@
 #define lest_CPP17_OR_GREATER  ( lest_CPLUSPLUS >= 201703L )
 #define lest_CPP20_OR_GREATER  ( lest_CPLUSPLUS >= 202002L )
 #define lest_CPP23_OR_GREATER  ( lest_CPLUSPLUS >= 202300L )
+
+#ifndef  __has_cpp_attribute
+# define __has_cpp_attribute(name)  0
+#endif
+
+// Indicate argument as possibly unused, if possible:
+
+#if __has_cpp_attribute(maybe_unused) && lest_CPP17_OR_GREATER
+# define lest_MAYBE_UNUSED(ARG)  [[maybe_unused]] ARG
+#elif defined (__GNUC__)
+# define lest_MAYBE_UNUSED(ARG)  ARG __attribute((unused))
+#else
+# define lest_MAYBE_UNUSED(ARG)  ARG
+#endif
 
 #if ! defined( lest_NO_SHORT_MACRO_NAMES ) && ! defined( lest_NO_SHORT_ASSERTION_NAMES )
 # define MODULE            lest_MODULE
@@ -169,18 +192,23 @@
 
 #if lest_FEATURE_AUTO_REGISTER
 
-# define lest_CASE( specification, proposition ) \
+#define lest_CASE( specification, proposition ) \
     static void lest_FUNCTION( lest::env & ); \
-    namespace { lest::add_test lest_REGISTRAR( specification, lest::test( proposition, lest_FUNCTION ) ); } \
-    static void lest_FUNCTION( lest::env & lest_env )
+    static lest::add_test lest_REGISTRAR( specification, lest::test( proposition, lest_FUNCTION ) ); \
+    static void lest_FUNCTION( lest_MAYBE_UNUSED( lest::env & lest_env ) )
+
 
 #else // lest_FEATURE_AUTO_REGISTER
 
 # define lest_CASE( proposition ) \
-    proposition, []( lest::env & lest_env )
+    lest_SUPPRESS_WMISBRACES \
+    proposition, []( lest::env & lest_env ) \
+    lest_RESTORE_WMISBRACES
 
 # define lest_CASE_ON( proposition, ... ) \
-    proposition, [__VA_ARGS__]( lest::env & lest_env )
+    lest_SUPPRESS_WMISBRACES \
+    proposition, [__VA_ARGS__]( lest::env & lest_env ) \
+    lest_RESTORE_WMISBRACES
 
 # define lest_MODULE( specification, module ) \
     namespace { lest::add_module _( specification, module ); }
